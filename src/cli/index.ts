@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { promptOptions } from './prompts/index.js';
 import { validateOptions } from './validators.js';
 import { resolveAngularVersion } from '../core/angular-version.js';
+import { discoverAngularVersions } from '../core/angular-version.js';
 import { assertCompatible } from '../core/compatibility.js';
 import { generateProject } from '../core/project-generator.js';
 import { addGenerator } from './commands/add.js';
@@ -18,18 +19,14 @@ program
   .version('1.0.0');
 program
   .argument('[project-name]', 'directory and project name')
-  .option('--angular <version>', 'Angular CLI version or latest', 'latest')
-  .option(
-    '--architecture <type>',
-    'enterprise, standard, or minimal',
-    'standard'
-  )
-  .option('--style <style>', 'scss, css, tailwind, or material', 'scss')
-  .option('--auth <type>', 'jwt or none', 'none')
-  .option('--state <type>', 'signals, ngrx, or none', 'signals')
+  .option('--angular <version>', 'Angular CLI version or latest')
+  .option('--architecture <type>', 'enterprise, standard, or minimal')
+  .option('--style <style>', 'scss, css, tailwind, or material')
+  .option('--auth <type>', 'jwt or none')
+  .option('--state <type>', 'signals, ngrx, or none')
   .option('--crud', 'include the products CRUD example')
   .option('--docker', 'include Docker files')
-  .option('--ci <provider>', 'github or none', 'none')
+  .option('--ci <provider>', 'github or none')
   .option('--no-testing', 'omit test setup')
   .option('--package-manager <manager>', 'npm, pnpm, or yarn', 'npm')
   .option('--no-install', 'skip dependency installation')
@@ -43,7 +40,15 @@ program.action(async (projectName: string | undefined, flags) => {
     targetDirectory: projectName ? resolve(projectName) : undefined,
     ...flags
   };
-  const options = await promptOptions(base);
+  let angularVersions;
+  if (!base.angular && !base.yes) {
+    try {
+      angularVersions = await discoverAngularVersions(Boolean(base.prerelease));
+    } catch {
+      angularVersions = [];
+    }
+  }
+  const options = await promptOptions(base, { angularVersions });
   const errors = validateOptions(options);
   if (errors.length) throw new Error(errors.join('\n'));
   const release = await resolveAngularVersion(

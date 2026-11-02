@@ -44,6 +44,16 @@ export function discoverSupportedReleases(
     .filter(Boolean);
 }
 
+export async function discoverAngularVersions(
+  includePrerelease = false,
+  client = npmRegistry
+): Promise<AngularRelease[]> {
+  return discoverSupportedReleases(
+    await client.view('@angular/cli'),
+    includePrerelease
+  );
+}
+
 export async function resolveAngularVersion(
   requested: string,
   includePrerelease = false,

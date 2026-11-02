@@ -5,7 +5,7 @@ Verified locally on 2026-11-02 for `setup-angular@1.0.0`:
 - `npm install` — passed.
 - `npm run build` — passed.
 - `npm run typecheck` — passed.
-- `npm test -- --run` — passed: 6 files, 10 tests.
+- `npm test -- --run` — passed: 7 files, 12 tests, including the complete interactive prompt flow and npm-cache ENOENT retry regression.
 - `npm run lint` — passed.
 - `npm run format:check` — passed.
 - `npm audit --omit=dev` — passed: 0 production vulnerabilities.
@@ -25,6 +25,8 @@ Verified locally on 2026-11-02 for `setup-angular@1.0.0`:
 - Final packed-workspace production build — bundle compilation completed, but Angular 22's Windows builder failed while creating the nested browser output directory with `EPERM` in the clean temporary directory. The same Angular 22 configurations built successfully in the workspace; this clean-temp filesystem limitation is not marked as passed.
 - Standard architecture — verified as a distinct components/services/models/pages structure; Enterprise and Minimal remain separately selectable.
 - Explicit Angular major resolution — unit tested for Angular 21 and dynamic recent-major discovery.
+- Interactive wizard regression — passed: Angular version, architecture, styling, authentication, state management, CRUD, Docker, and CI selections are displayed and forwarded; automated `--yes` mode remains prompt-free.
+- Angular CLI ENOENT recovery — passed: an npm cache/package lookup failure retries with an isolated cache; this is handled separately from prompt selection.
 - Angular 20.3.42 matrix — Minimal/CSS, Standard/SCSS/Signals/JWT/CRUD, Enterprise/Material/NgRx/JWT/CRUD, and Standard/Tailwind/JWT/Signals/CRUD all generated and installed. Production builds passed; Tailwind passed with `--output-path dist2` because the Windows Temp filesystem raised `EPERM` for Angular's default nested output directory.
 - Angular 21.2.29 matrix — Minimal/CSS, Standard/SCSS/Signals/JWT/CRUD, Enterprise/Material/NgRx/JWT/CRUD, and Standard/Tailwind/JWT/Signals/CRUD all generated and installed. Production builds passed; Tailwind passed with `--output-path dist2` for the same Windows Temp filesystem limitation.
 - Angular 20/21 dependency compatibility fix — NgRx, Material, and CDK are now installed using the resolved Angular major (`@ngrx/*@^<major>.0.0`, `@angular/material@^<major>.0.0`, `@angular/cdk@^<major>.0.0`). Angular 20 initially rejected latest NgRx 22; the corrected rerun passed.

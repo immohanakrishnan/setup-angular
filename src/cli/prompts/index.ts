@@ -1,12 +1,32 @@
 import { confirm, select, input } from '@inquirer/prompts';
 import type { ProjectOptions } from '../../types/index.js';
+
+export interface PromptContext {
+  angularVersions?: Array<{ version: string; major: number }>;
+}
+
 export async function promptOptions(
-  base: Partial<ProjectOptions>
+  base: Partial<ProjectOptions>,
+  context: PromptContext = {}
 ): Promise<ProjectOptions> {
   const automated = base.yes === true;
   const projectName =
     base.projectName ??
     (automated ? 'angular-app' : await input({ message: 'Project name:' }));
+  const angular =
+    base.angular ??
+    (automated
+      ? 'latest'
+      : await select({
+          message: 'Angular version:',
+          choices: [
+            { name: 'Latest Stable', value: 'latest' },
+            ...(context.angularVersions ?? []).map((release) => ({
+              name: `Angular ${release.major} (${release.version})`,
+              value: String(release.major)
+            }))
+          ]
+        }));
   const architecture =
     base.architecture ??
     (automated
@@ -78,7 +98,7 @@ export async function promptOptions(
   return {
     projectName,
     targetDirectory: base.targetDirectory ?? projectName,
-    angular: base.angular ?? 'latest',
+    angular,
     architecture,
     style,
     auth,
