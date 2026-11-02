@@ -211,4 +211,6 @@ npm run pack:check
 
 ## License
 
-[MIT](LICENSE)
+Licensed under the [MIT License](LICENSE).
+
+Copyright (c) 2026 Mohanakrishnan K.

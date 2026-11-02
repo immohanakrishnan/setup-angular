@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { promptOptions } from './prompts/index.js';
 import { validateOptions } from './validators.js';
@@ -16,7 +17,11 @@ program
   .description(
     'Set up scalable Angular applications with an enterprise-ready baseline.'
   )
-  .version('1.0.0');
+  .version(
+    JSON.parse(
+      readFileSync(new URL('../../package.json', import.meta.url), 'utf8')
+    ).version
+  );
 program
   .argument('[project-name]', 'directory and project name')
   .option('--angular <version>', 'Angular CLI version or latest')
