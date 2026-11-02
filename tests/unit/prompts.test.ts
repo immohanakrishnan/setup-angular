@@ -55,4 +55,16 @@ describe('non-interactive prompts', () => {
     expect(mockedSelect).toHaveBeenCalledTimes(5);
     expect(mockedConfirm).toHaveBeenCalledTimes(3);
   });
+
+  it('preserves explicit Angular CLI SSR and zoneless flags', async () => {
+    const options = await promptOptions({
+      projectName: 'ssr-app',
+      ssr: true,
+      zoneless: true,
+      yes: true
+    });
+
+    expect(options.ssr).toBe(true);
+    expect(options.zoneless).toBe(true);
+  });
 });

@@ -33,7 +33,9 @@ program
   .option('--no-git', 'skip git initialization')
   .option('--yes', 'use non-interactive defaults')
   .option('--dry-run', 'show planned files without writing or running commands')
-  .option('--prerelease', 'allow prerelease Angular versions');
+  .option('--prerelease', 'allow prerelease Angular versions')
+  .option('--ssr', 'enable server-side rendering')
+  .option('--zoneless', 'enable zoneless change detection');
 program.action(async (projectName: string | undefined, flags) => {
   const base: Partial<ProjectOptions> = {
     projectName,

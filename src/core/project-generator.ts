@@ -1,7 +1,7 @@
-import { mkdir, access, mkdtemp } from 'node:fs/promises';
-import { basename, dirname, isAbsolute, join, resolve, win32 } from 'node:path';
-import { tmpdir } from 'node:os';
+import { mkdir, access } from 'node:fs/promises';
+import { basename, dirname, isAbsolute, resolve, win32 } from 'node:path';
 import { processRunner, type ProcessRunner } from './process-runner.js';
+import { runNpmOperationWithCacheRetry } from './npm-cache-retry.js';
 import { TemplateEngine } from './template-engine.js';
 import { addDependencies, installDependencies } from './dependency-manager.js';
 import { generateArchitecture } from '../generators/architecture.js';
@@ -44,24 +44,16 @@ export async function generateProject(
       '--skip-git',
       '--skip-install',
       '--package-manager',
-      options.packageManager
+      options.packageManager,
+      `--ssr=${options.ssr === true}`,
+      `--zoneless=${options.zoneless === true}`
     ];
-    try {
-      await runner.run('npx', args, { cwd: dirname(root) });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (!message.includes('ENOENT') && !message.includes('package.json'))
-        throw error;
-      const isolatedCache = await mkdtemp(
-        join(tmpdir(), 'setup-angular-npm-cache-')
-      );
-      console.warn(
-        'Angular CLI lookup hit an npm cache error; retrying with an isolated cache.'
-      );
-      await runner.run('npx', ['--cache', isolatedCache, ...args], {
-        cwd: dirname(root)
-      });
-    }
+    await runNpmOperationWithCacheRetry(
+      'npx',
+      args,
+      { cwd: dirname(root) },
+      runner
+    );
   }
   await generateArchitecture(root, options.architecture, engine);
   if (options.auth === 'jwt') await generateAuth(root, engine);

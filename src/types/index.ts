@@ -23,6 +23,8 @@ export interface ProjectOptions {
   yes: boolean;
   dryRun: boolean;
   prerelease: boolean;
+  ssr?: boolean;
+  zoneless?: boolean;
 }
 
 export interface AngularRelease {

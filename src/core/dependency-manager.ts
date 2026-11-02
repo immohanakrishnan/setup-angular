@@ -1,4 +1,5 @@
 import { processRunner, type ProcessRunner } from './process-runner.js';
+import { runNpmOperationWithCacheRetry } from './npm-cache-retry.js';
 import type { PackageManager } from '../types/index.js';
 
 const commands: Record<PackageManager, { install: string[]; add: string[] }> = {
@@ -11,7 +12,12 @@ export async function installDependencies(
   manager: PackageManager,
   runner: ProcessRunner = processRunner
 ): Promise<void> {
-  await runner.run(manager, commands[manager].install, { cwd });
+  await runNpmOperationWithCacheRetry(
+    manager,
+    commands[manager].install,
+    { cwd },
+    runner
+  );
 }
 export async function addDependencies(
   cwd: string,
@@ -20,7 +26,10 @@ export async function addDependencies(
   runner: ProcessRunner = processRunner
 ): Promise<void> {
   if (dependencies.length)
-    await runner.run(manager, [...commands[manager].add, ...dependencies], {
-      cwd
-    });
+    await runNpmOperationWithCacheRetry(
+      manager,
+      [...commands[manager].add, ...dependencies],
+      { cwd },
+      runner
+    );
 }

@@ -1,18 +1,18 @@
 # Test results
 
-Verified locally on 2026-11-02 for `setup-angular@1.0.0`:
+Verified locally on 2026-11-02 for `setup-angular@1.0.1`:
 
 - `npm install` — passed.
 - `npm run build` — passed.
 - `npm run typecheck` — passed.
-- `npm test -- --run` — passed: 7 files, 12 tests, including the complete interactive prompt flow and npm-cache ENOENT retry regression.
+- `npm test -- --run` — passed: 8 files, 17 tests, including the complete interactive prompt flow, npm-cache retry classification, generator retry behavior, and SSR/zoneless flag forwarding.
 - `npm run lint` — passed.
 - `npm run format:check` — passed.
 - `npm audit --omit=dev` — passed: 0 production vulnerabilities.
 - Credential scan — passed: no private-key, AWS-key, GitHub-token, or Slack-token patterns found in release sources.
 - `node dist/cli/index.js --help` — passed with `setup-angular` branding.
-- `node dist/cli/index.js --version` — passed: `1.0.0`.
-- `npm run pack:check` — passed; tarball is `setup-angular@1.0.0` and contains compiled runtime, `bin/setup-angular.js`, docs, and metadata only.
+- `node dist/cli/index.js --version` — passed: `1.0.1`.
+- `npm run pack:check` — passed; tarball is `setup-angular@1.0.1` and contains compiled runtime, `bin/setup-angular.js`, docs, and metadata only.
 - CLI dry-run e2e — passed through the compiled binary.
 - Generator integration suite — passed: feature composition and collision-safe output.
 - Angular 22.2.5 Enterprise + SCSS + Signals — generated, installed, built, and Angular tests passed (1 file, 2 tests).
@@ -27,6 +27,11 @@ Verified locally on 2026-11-02 for `setup-angular@1.0.0`:
 - Explicit Angular major resolution — unit tested for Angular 21 and dynamic recent-major discovery.
 - Interactive wizard regression — passed: Angular version, architecture, styling, authentication, state management, CRUD, Docker, and CI selections are displayed and forwarded; automated `--yes` mode remains prompt-free.
 - Angular CLI ENOENT recovery — passed: an npm cache/package lookup failure retries with an isolated cache; this is handled separately from prompt selection.
+- npm dependency-operation recovery — passed: npm add/install operations use the same bounded isolated-cache retry as Angular CLI lookup; temporary retry caches are removed after success and failure.
+- npm error classification — passed: `_cacache` ENOENT, corrupted tarballs, `TAR_BAD_ARCHIVE`, and integrity/checksum failures retry; permissions, invalid package names, engine failures, and `ERESOLVE` conflicts do not.
+- Angular CLI base options — SSR and zoneless mode are explicitly forwarded with `--ssr` and `--zoneless`; Angular CLI is not relied on for nested interactive questions.
+- Angular 20.3.42 full requested configuration — passed: Enterprise + Tailwind CSS + JWT + Signals + CRUD + Docker + GitHub Actions + SSR + zoneless generated successfully, installed from a fresh cache, and production-built with browser, server, and prerendered bundles.
+- Real npm cache failure reproduction — initial Windows install emitted corrupted-tarball warnings and left an incomplete dependency tree; a subsequent clean-cache reinstall completed and the same generated app built successfully. This validates the failure mode and the isolated-cache recovery approach.
 - Angular 20.3.42 matrix — Minimal/CSS, Standard/SCSS/Signals/JWT/CRUD, Enterprise/Material/NgRx/JWT/CRUD, and Standard/Tailwind/JWT/Signals/CRUD all generated and installed. Production builds passed; Tailwind passed with `--output-path dist2` because the Windows Temp filesystem raised `EPERM` for Angular's default nested output directory.
 - Angular 21.2.29 matrix — Minimal/CSS, Standard/SCSS/Signals/JWT/CRUD, Enterprise/Material/NgRx/JWT/CRUD, and Standard/Tailwind/JWT/Signals/CRUD all generated and installed. Production builds passed; Tailwind passed with `--output-path dist2` for the same Windows Temp filesystem limitation.
 - Angular 20/21 dependency compatibility fix — NgRx, Material, and CDK are now installed using the resolved Angular major (`@ngrx/*@^<major>.0.0`, `@angular/material@^<major>.0.0`, `@angular/cdk@^<major>.0.0`). Angular 20 initially rejected latest NgRx 22; the corrected rerun passed.

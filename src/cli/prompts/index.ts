@@ -112,6 +112,8 @@ export async function promptOptions(
     git: base.git ?? true,
     yes: base.yes ?? false,
     dryRun: base.dryRun ?? false,
-    prerelease: base.prerelease ?? false
+    prerelease: base.prerelease ?? false,
+    ssr: base.ssr ?? false,
+    zoneless: base.zoneless ?? false
   } as ProjectOptions;
 }

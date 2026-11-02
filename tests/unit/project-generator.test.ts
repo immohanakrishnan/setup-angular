@@ -43,4 +43,44 @@ describe('project generator process recovery', () => {
     expect(calls).toHaveLength(2);
     expect(calls[1].args[0]).toBe('--cache');
   });
+
+  it('forwards SSR and zoneless settings to Angular CLI', async () => {
+    const root = await mkdtemp(
+      join(tmpdir(), 'setup-angular-generator-flags-')
+    );
+    const calls: Array<{ command: string; args: string[] }> = [];
+    const runner = {
+      async run(command: string, args: string[]) {
+        calls.push({ command, args });
+      }
+    };
+
+    await generateProject(
+      {
+        projectName: 'ssr-zoneless-app',
+        targetDirectory: root,
+        angular: '20.3.42',
+        architecture: 'minimal',
+        style: 'css',
+        auth: 'none',
+        state: 'none',
+        crud: false,
+        docker: false,
+        ci: 'none',
+        testing: true,
+        packageManager: 'npm',
+        install: false,
+        git: false,
+        yes: true,
+        dryRun: false,
+        prerelease: false,
+        ssr: true,
+        zoneless: true
+      },
+      runner
+    );
+
+    expect(calls[0].args).toContain('--ssr=true');
+    expect(calls[0].args).toContain('--zoneless=true');
+  });
 });
