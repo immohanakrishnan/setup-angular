@@ -8,8 +8,46 @@ import { generateState } from '../../src/generators/state.js';
 import { generateStyling } from '../../src/generators/styling.js';
 import { generateCrud } from '../../src/generators/crud.js';
 import { generateDocker, generateCi } from '../../src/generators/tooling.js';
+import { generateStarterDashboard } from '../../src/generators/starter-dashboard.js';
+import type { ProjectOptions } from '../../src/types/index.js';
 
 describe('feature generator integration', () => {
+  it('replaces the Angular welcome page with a configured starter dashboard', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'setup-angular-dashboard-'));
+    const engine = new TemplateEngine();
+    const options: ProjectOptions = {
+      projectName: 'launchpad',
+      targetDirectory: root,
+      angular: '22.2.5',
+      architecture: 'enterprise',
+      style: 'tailwind',
+      auth: 'jwt',
+      state: 'signals',
+      crud: true,
+      docker: false,
+      ci: 'none',
+      testing: true,
+      packageManager: 'npm',
+      install: false,
+      git: false,
+      yes: true,
+      dryRun: false,
+      prerelease: false
+    };
+    await generateStarterDashboard(root, options, engine);
+    const html = await readFile(join(root, 'src/app/app.html'), 'utf8');
+    const dashboard = await readFile(
+      join(root, 'src/app/dashboard/dashboard.component.ts'),
+      'utf8'
+    );
+    const routes = await readFile(join(root, 'src/app/app.routes.ts'), 'utf8');
+    expect(html).toContain('Angular 22.2.5');
+    expect(dashboard).toContain('JWT scaffold');
+    expect(dashboard).toContain('Products');
+    expect(html).toContain('Angular CLI guide');
+    expect(routes).toContain("path: 'login'");
+  });
+
   it('generates the enterprise feature set without collisions', async () => {
     const root = await mkdtemp(join(tmpdir(), 'setup-angular-'));
     const engine = new TemplateEngine();

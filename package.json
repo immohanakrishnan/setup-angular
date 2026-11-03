@@ -1,6 +1,6 @@
 {
   "name": "setup-angular",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -11,6 +11,14 @@
     "url": "https://github.com/immohanakrishnan/setup-angular/issues"
   },
   "description": "A production-oriented Angular workspace setup CLI with enterprise architecture presets.",
+  "keywords": [
+    "angular",
+    "angular-cli",
+    "cli",
+    "starter",
+    "scaffold",
+    "project-generator"
+  ],
   "type": "module",
   "bin": {
     "setup-angular": "dist/cli/index.js"

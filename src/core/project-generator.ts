@@ -10,6 +10,7 @@ import { generateState } from '../generators/state.js';
 import { generateStyling } from '../generators/styling.js';
 import { generateCrud } from '../generators/crud.js';
 import { generateCi, generateDocker } from '../generators/tooling.js';
+import { generateStarterDashboard } from '../generators/starter-dashboard.js';
 import type { ProjectOptions, CommandResult } from '../types/index.js';
 
 export async function generateProject(
@@ -63,6 +64,7 @@ export async function generateProject(
   if (options.docker) await generateDocker(root, engine);
   if (options.ci === 'github')
     await generateCi(root, engine, options.packageManager);
+  await generateStarterDashboard(root, options, engine);
   const extra: string[] = [];
   const angularMajor = options.angular.split('.')[0];
   if (options.state === 'ngrx')
